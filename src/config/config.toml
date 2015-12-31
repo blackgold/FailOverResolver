@@ -1,9 +1,0 @@
-servicename = "pop"
-[algorithm]
-name = "randomized"
-ttl = 30
-[servers]
-  [servers.one]
-  uri = "10.0.0.1"
-  [servers.two]
-  uri = "10.0.0.2"

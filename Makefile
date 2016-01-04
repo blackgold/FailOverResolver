@@ -9,6 +9,8 @@ build: $(GO_FILES)
 test:
 	go test config -v
 
+fmt:
+	 @find src -name \*.go -exec gofmt -l -w {} \;
 clean:
 	rm -rf bin/* pkg/*
 

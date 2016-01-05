@@ -6,9 +6,9 @@ import (
 )
 
 func main() {
-	cnf, err := config.Parse("config/config.json")
+	confArray, err := config.ParseDir("config")
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(cnf)
+	fmt.Println("%v",confArray)
 }

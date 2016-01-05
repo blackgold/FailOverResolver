@@ -7,7 +7,7 @@ build: $(GO_FILES)
 	@GOPATH=$(GOPATH) go build -o bin/for
 
 test:
-	go test config -v
+	go test config datastore -v
 
 fmt:
 	 @find src -name \*.go -exec gofmt -l -w {} \;

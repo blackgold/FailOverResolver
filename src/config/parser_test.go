@@ -24,7 +24,7 @@ func TestParseDir(t *testing.T) {
 		t.Error("Expected nil and got error " + err.Error())
 	}
 	for _, conf := range *confArray {
-		if conf.Servicename != "file" {
+		if conf.Servicename != "file" && conf.Servicename != "file1"{
 			t.Error("Expected file and got " + conf.Servicename)
 		}
 		if conf.Algorithm.Name != "randomized" {

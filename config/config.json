@@ -6,12 +6,12 @@
   },
   "Servers" : [
       {  
-         "host" : "10.0.0.1",
-         "uri"  : "http://10.0.0.1/health"
+         "host" : "127.0.0.1",
+         "uri"  : "http://127.0.0.1:8080/health"
       },
       {  
-         "host" : "10.0.0.2",
-         "uri"  : "http://10.0.0.2/health"
+         "host" : "127.0.0.1",
+         "uri"  : "http://127.0.0.1:9090/health"
       }
   ]
 }

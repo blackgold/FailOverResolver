@@ -17,3 +17,4 @@ clean:
 setup:
 	@GOPATH=$(VENDORS_PATH) go get github.com/golang/lint/golint
 	@GOPATH=$(VENDORS_PATH) go get github.com/BurntSushi/toml
+	@GOPATH=$(VENDORS_PATH) go get github.com/gorilla/mux

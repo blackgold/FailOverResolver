@@ -29,6 +29,7 @@ func main() {
 	rtr.HandleFunc("/services", hand.ListServices).Methods("GET")
 	rtr.HandleFunc("/services/{servicename}", hand.ListService).Methods("GET")
 	rtr.HandleFunc("/services/{servicename}/stats", hand.ListServiceStats).Methods("GET")
+	rtr.HandleFunc("/services/{servicename}/resolve", hand.Resolve).Methods("GET")
 	http.Handle("/", rtr)
 	fmt.Println(http.ListenAndServe(":80", nil))
 }

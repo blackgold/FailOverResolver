@@ -2,7 +2,6 @@ package datastore
 
 import (
 	"errors"
-	"fmt"
 	"sync"
 )
 
@@ -57,7 +56,6 @@ func (d *DataStore) Update(service string, server string, sdata *ServerData) err
 		sd.ServiceDataMap[server] = &sdq
 		d.DataStoreMap[service] = &sd
 	}
-	fmt.Println(d.DataStoreMap)
 	return nil
 }
 

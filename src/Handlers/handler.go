@@ -8,10 +8,15 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"resolver"
 )
 
 type Services struct {
 	Services []string `json:"services"`
+}
+
+type Servers struct {
+	Hostnames []string `json:"hostnames"`
 }
 
 type Stat struct {
@@ -37,8 +42,8 @@ func (h *Handler) ListServices(w http.ResponseWriter, r *http.Request) {
 
 	out, err := json.Marshal(res)
 	if err != nil {
-		log.Println("HandleUser: json marshall failed  error: ", err)
-		fmt.Printf("{\"Error\":\"Internal Server Error\"}")
+		log.Println("ListServices: json marshall failed  error: ", err)
+		http.Error(w, "{\"Error\":\"Internal Server Error\"}", 500)
 	} else {
 		fmt.Fprintf(w, "%s", string(out))
 	}
@@ -50,15 +55,17 @@ func (h *Handler) ListService(w http.ResponseWriter, r *http.Request) {
 		if conf.Servicename == vars["servicename"] {
 			out, err := json.Marshal(conf)
 			if err != nil {
-				log.Println("HandleUser: json marshall failed  error: ", err)
-				fmt.Printf("{\"Error\":\"Internal Server Error\"}")
+				log.Println("ListService: json marshall failed  error: ", err)
+				http.Error(w, "{\"Error\":\"Internal Server Error\"}", 500)
+				return
 			} else {
 				fmt.Fprintf(w, "%s", string(out))
 			}
 			return
 		}
 	}
-	fmt.Fprintf(w, "%s", "{Error: no service}")
+	log.Println("ListService: service not found in config", vars["servicename"])
+	http.Error(w, "{\"Error\":\"Internal Server Error\"}", 500)
 }
 
 func (h *Handler) ListServiceStats(w http.ResponseWriter, r *http.Request) {
@@ -78,8 +85,8 @@ func (h *Handler) ListServiceStats(w http.ResponseWriter, r *http.Request) {
 				}
 				out, err := json.Marshal(res)
 				if err != nil {
-					log.Println("HandleUser: json marshall failed  error: ", err)
-					fmt.Printf("{\"Error\":\"Internal Server Error\"}")
+					log.Println("ListServiceStats: json marshall failed  error: ", err)
+					http.Error(w, "{\"Error\":\"Internal Server Error\"}", 500)
 					return
 				} else {
 					fmt.Fprintf(w, "%s", string(out))
@@ -90,5 +97,27 @@ func (h *Handler) ListServiceStats(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	fmt.Fprintf(w, "%s", "{Error: no service}")
+	log.Println("ListServiceStats: service not found in config", vars["servicename"])
+	http.Error(w, "{\"Error\":\"Internal Server Error\"}", 500)
+}
+
+func (h *Handler) Resolve(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	rslvr := resolver.Resolver{ConfigArray: h.ConfigArray, Data: h.Data}
+	lst, err := rslvr.Resolve(vars["servicename"])
+	if err == nil {
+		var res Servers
+		res.Hostnames = lst
+		out, err := json.Marshal(res)
+		if err != nil {
+			log.Println("Resolve: json marshall failed  error: ", err)
+			http.Error(w, "{\"Error\":\"Internal Server Error\"}", 500)
+			return
+		} else {
+			fmt.Fprintf(w, "%s", string(out))
+			return
+		}
+	}
+	log.Println("Resolve error", err)
+	http.Error(w, "{\"Error\":\"Internal Server Error\"}", 500)
 }

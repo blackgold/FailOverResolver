@@ -24,13 +24,14 @@ type Stat struct {
 }
 
 type Server struct {
-	Hostname string `json:"hostname"`
-	Status   []bool `json:"Status"`
+	Hostname     string  `json:"hostname"`
+	Status       []bool  `json:"Status"`
+	DurationInNs []int64 `json:"DurationInNs"`
 }
 
 type Handler struct {
-	ConfigObj   *config.Config
-	Data        *datastore.DataStore
+	ConfigObj *config.Config
+	Data      *datastore.DataStore
 }
 
 func (h *Handler) ListServices(w http.ResponseWriter, r *http.Request) {
@@ -80,6 +81,7 @@ func (h *Handler) ListServiceStats(w http.ResponseWriter, r *http.Request) {
 					ser.Hostname = key
 					for i := 0; i < val.Pos; i++ {
 						ser.Status = append(ser.Status, val.Queue[i].Serverstatus)
+						ser.DurationInNs = append(ser.DurationInNs, val.Queue[i].DurationInNs)
 					}
 					res.Servers = append(res.Servers, ser)
 				}

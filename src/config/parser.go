@@ -7,7 +7,11 @@ import (
 	"strings"
 )
 
-func Parse(file string) (*ServiceConfig, error) {
+type Config struct {
+	ConfArray []*ServiceConfig
+}
+
+func (c *Config) Parse(file string) (*ServiceConfig, error) {
 	config := &ServiceConfig{}
 
 	data, err := ioutil.ReadFile(file)
@@ -19,11 +23,10 @@ func Parse(file string) (*ServiceConfig, error) {
 	return config, err
 }
 
-func ParseDir(dir string) (*[]*ServiceConfig, error) {
-	var ServiceConfigArray []*ServiceConfig
+func (c *Config) ParseDir(dir string) error {
 	fileInfoArray, err := ioutil.ReadDir(dir)
 	if err != nil {
-		return &ServiceConfigArray, err
+		return err
 	}
 	var filecount int = 0
 	for _, fileInfo := range fileInfoArray {
@@ -32,15 +35,15 @@ func ParseDir(dir string) (*[]*ServiceConfig, error) {
 		}
 	}
 	if filecount < 1 {
-		return &ServiceConfigArray, errors.New("No config files found")
+		return errors.New("No config files found")
 	}
 	for _, fileInfo := range fileInfoArray {
 		if !fileInfo.IsDir() && strings.HasSuffix(fileInfo.Name(), ".json") {
-			config, err := Parse(dir + "/" + fileInfo.Name())
+			config, err := c.Parse(dir + "/" + fileInfo.Name())
 			if err == nil {
-				ServiceConfigArray = append(ServiceConfigArray, config)
+				c.ConfArray = append(c.ConfArray, config)
 			}
 		}
 	}
-	return &ServiceConfigArray, nil
+	return nil
 }

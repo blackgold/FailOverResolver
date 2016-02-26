@@ -10,13 +10,13 @@ import (
 )
 
 type Resolver struct {
-	ConfigArray *[]*config.ServiceConfig
+	Config      *config.Config
 	Data        *datastore.DataStore
 }
 
 func (r *Resolver) Resolve(serviceName string) ([]string, error) {
 	serviceConfExists := false
-	for _, conf := range *r.ConfigArray {
+	for _, conf := range r.Config.ConfArray {
 		if conf.Servicename == serviceName {
 			serviceConfExists = true
 		}

@@ -24,19 +24,20 @@ type Stat struct {
 }
 
 type Server struct {
-	Hostname string `json:"hostname"`
-	Status   []bool `json:"Status"`
+	Hostname     string  `json:"hostname"`
+	Status       []bool  `json:"Status"`
+	DurationInNs []int64 `json:"DurationInNs"`
 }
 
 type Handler struct {
-	ConfigArray *[]*config.ServiceConfig
-	Data        *datastore.DataStore
+	ConfigObj *config.Config
+	Data      *datastore.DataStore
 }
 
 func (h *Handler) ListServices(w http.ResponseWriter, r *http.Request) {
 
 	var res Services
-	for _, conf := range *h.ConfigArray {
+	for _, conf := range h.ConfigObj.ConfArray {
 		res.Services = append(res.Services, conf.Servicename)
 	}
 
@@ -51,7 +52,7 @@ func (h *Handler) ListServices(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) ListService(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	for _, conf := range *h.ConfigArray {
+	for _, conf := range h.ConfigObj.ConfArray {
 		if conf.Servicename == vars["servicename"] {
 			out, err := json.Marshal(conf)
 			if err != nil {
@@ -70,7 +71,7 @@ func (h *Handler) ListService(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) ListServiceStats(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	for _, conf := range *h.ConfigArray {
+	for _, conf := range h.ConfigObj.ConfArray {
 		if conf.Servicename == vars["servicename"] {
 			sd, err := h.Data.Get(conf.Servicename)
 			if sd != nil && err == nil {
@@ -80,6 +81,7 @@ func (h *Handler) ListServiceStats(w http.ResponseWriter, r *http.Request) {
 					ser.Hostname = key
 					for i := 0; i < val.Pos; i++ {
 						ser.Status = append(ser.Status, val.Queue[i].Serverstatus)
+						ser.DurationInNs = append(ser.DurationInNs, val.Queue[i].DurationInNs)
 					}
 					res.Servers = append(res.Servers, ser)
 				}
@@ -103,7 +105,7 @@ func (h *Handler) ListServiceStats(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) Resolve(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	rslvr := resolver.Resolver{ConfigArray: h.ConfigArray, Data: h.Data}
+	rslvr := resolver.Resolver{Config: h.ConfigObj, Data: h.Data}
 	lst, err := rslvr.Resolve(vars["servicename"])
 	if err == nil {
 		var res Servers

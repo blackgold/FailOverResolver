@@ -7,6 +7,7 @@ import (
 
 type ServerData struct {
 	Serverstatus bool
+	DurationInNs int64
 }
 
 const ServerDataQueueSize = 60 // make this configurable

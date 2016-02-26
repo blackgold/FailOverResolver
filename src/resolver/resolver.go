@@ -45,13 +45,13 @@ func (r *Resolver) Resolve(serviceName string) ([]string, error) {
 			}
 
 		} else {
-			log.Println("serive missing in datastore")
-			return nil, errors.New("serice not found in datastore")
+			log.Println("Service missing in datastore")
+			return nil, errors.New("Service not found in datastore")
 		}
 
 	} else {
 		log.Println("Error: no service " + serviceName)
-		return nil, errors.New("serice not found in config")
+		return nil, errors.New("Service not found in config")
 	}
 
 }
